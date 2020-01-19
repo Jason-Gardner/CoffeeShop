@@ -1,0 +1,31 @@
+﻿
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model Person
+
+<h1>New Account Created!</h1>
+
+<table>
+    <tr>
+        <td>User Name: @Model.userName</td>
+    </tr>
+    <tr>
+        <td>First Name: @Model.firstName</td>
+    </tr>
+    <tr>
+        <td>Last Name: @Model.lastName</td>
+    </tr>
+    <tr>
+        <td>Account Type: @Model.accountType</td>
+    </tr>
+    <tr>
+        <td>Email: @Model.email</td>
+    </tr>
+    <tr>
+        <td>Phone: @Model.phone</td>
+    </tr>
+</table>
+
