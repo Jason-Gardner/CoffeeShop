@@ -59,6 +59,42 @@ namespace CoffeeShop.Controllers
             return View(User);
         }
 
+        public IActionResult Profile()
+        {
+            return View();
+        }
+
+        public IActionResult Order()
+        {
+            return View();
+        }
+
+        public IActionResult Review(string light, string lightbig, string med, string medbig, string dark, string darkbig, string filter, string cream, string sugar)
+        {
+            Person newOrder = new Person();
+            newOrder.currentOrder.Add(light);
+            newOrder.currentOrder.Add(lightbig);
+            newOrder.currentOrder.Add(med);
+            newOrder.currentOrder.Add(medbig);
+            newOrder.currentOrder.Add(dark);
+            newOrder.currentOrder.Add(darkbig);
+            newOrder.currentOrder.Add(filter);
+            newOrder.currentOrder.Add(sugar);
+            newOrder.currentOrder.Add(cream);
+
+            List<string> reviewOrder = new List<string>();
+
+            foreach (string item in newOrder.currentOrder)
+            {
+                if (item != "")
+                {
+                    ViewBag.reviewOrder.Add(item);
+                }
+            }
+
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

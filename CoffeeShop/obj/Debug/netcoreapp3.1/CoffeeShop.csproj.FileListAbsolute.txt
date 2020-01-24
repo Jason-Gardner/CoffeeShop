@@ -137,3 +137,6 @@ C:\Users\Jason Gardner\source\repos\CoffeeShop\CoffeeShop\obj\Debug\netcoreapp3.
 C:\Users\Jason Gardner\source\repos\CoffeeShop\CoffeeShop\obj\Debug\netcoreapp3.1\CoffeeShop.pdb
 C:\Users\Jason Gardner\source\repos\CoffeeShop\CoffeeShop\obj\Debug\netcoreapp3.1\Razor\Views\Home\Register.cshtml.g.cs
 C:\Users\Jason Gardner\source\repos\CoffeeShop\CoffeeShop\obj\Debug\netcoreapp3.1\Razor\Views\Home\createUser.cshtml.g.cs
+C:\Users\Jason Gardner\source\repos\CoffeeShop\CoffeeShop\obj\Debug\netcoreapp3.1\Razor\Views\Home\Order.cshtml.g.cs
+C:\Users\Jason Gardner\source\repos\CoffeeShop\CoffeeShop\obj\Debug\netcoreapp3.1\Razor\Views\Home\Profile.cshtml.g.cs
+C:\Users\Jason Gardner\source\repos\CoffeeShop\CoffeeShop\obj\Debug\netcoreapp3.1\Razor\Views\Home\Review.cshtml.g.cs

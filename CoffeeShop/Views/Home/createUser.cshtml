@@ -6,9 +6,10 @@
 
 @model Person
 
+<div class="text-center">
 <h1>New Account Created!</h1>
 
-<table>
+<table style="padding-bottom: 10px;" align="center">
     <tr>
         <td>User Name: @Model.userName</td>
     </tr>
@@ -27,5 +28,7 @@
     <tr>
         <td>Phone: @Model.phone</td>
     </tr>
-</table>
-
+</table><br />
+<input type="button" value="View Profile" onclick="@("window.location.href='" + @Url.Action("Profile", "Home") + "'");" />
+<input type="button" value="Create Order" onclick="@("window.location.href='" + @Url.Action("Order", "Home") + "'");" />
+</div>

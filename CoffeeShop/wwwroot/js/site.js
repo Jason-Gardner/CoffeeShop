@@ -11,3 +11,5 @@ function validatePassword() {
 
 password.onchange = validatePassword;
 cpassword.onkeyup = validatePassword;
+
+

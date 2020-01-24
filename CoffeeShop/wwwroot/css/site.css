@@ -61,11 +61,13 @@ html {
 body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
+  margin-top: 5%;
 }
 .footer {
   position: absolute;
   bottom: 0;
   width: 100%;
+  background-color: lightcyan;
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
@@ -79,4 +81,22 @@ fieldset {
     padding-left: 0.75em;
     padding-right: 0.75em;
     border: 2px groove (internal value);
+}
+
+label {
+    font-size: 14pt;
+}
+
+input.checkbox {
+    height: 150%;
+    width: 150%;
+}
+
+.itemdesc {
+    font-size: 9pt;
+    margin-left: 8%;
+}
+
+.navbar {
+    background-color: lightcyan;
 }

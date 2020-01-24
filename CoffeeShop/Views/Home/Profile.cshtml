@@ -1,0 +1,34 @@
+﻿
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Profile</h1>
+
+@model Person
+
+<div class="text-center">
+    <h1>Profile Information</h1>
+
+    <table style="padding-bottom: 10px;" align="center">
+        <tr>
+            <td>User Name: @Model.userName</td>
+        </tr>
+        <tr>
+            <td>First Name: @Model.firstName</td>
+        </tr>
+        <tr>
+            <td>Last Name: @Model.lastName</td>
+        </tr>
+        <tr>
+            <td>Account Type: @Model.accountType</td>
+        </tr>
+        <tr>
+            <td>Email: @Model.email</td>
+        </tr>
+        <tr>
+            <td>Phone: @Model.phone</td>
+        </tr>
+    </table><br /></div>
+

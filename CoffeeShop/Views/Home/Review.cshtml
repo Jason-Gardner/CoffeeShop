@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewData["Title"] = "Review";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model List<string>
+
+<h1>Review Order</h1>
+
+@foreach (var item in Model)
+{
+    <div>
+        @item
+        <hr />
+    </div>
+}
+
+
+
+

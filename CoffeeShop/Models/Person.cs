@@ -7,6 +7,8 @@ namespace CoffeeShop.Models
 {
     public class Person
     {
+        List<List<string>> orderHistory { get; set; }
+        public List<string> currentOrder { get; set; }
         public string userName { get; set; }
         public string firstName { get; set; }
         public string lastName { get; set; }
@@ -19,5 +21,10 @@ namespace CoffeeShop.Models
         {
 
         }
+    }
+
+    public class userOrder
+    {
+        
     }
 }
