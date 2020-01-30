@@ -5,7 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using CoffeeShop.Models;
+using Microsoft.AspNetCore.Http;
+using System.Web;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 
 namespace CoffeeShop.Controllers
 {
@@ -30,13 +35,105 @@ namespace CoffeeShop.Controllers
             return View();
         }
 
-        public IActionResult Login()
+        public IActionResult buyItem(int itemID)
+        {
+            if ((bool)TempData.Peek("Login"))
+            {
+                ShopDBContext dbinv = new ShopDBContext();
+
+                foreach (Inventory item in dbinv.Inventory)
+                {
+                    if (itemID == item.ProductId)
+                    {
+                        if (item.Inventory1 > 0 )
+                        {
+                            Response.Cookies.Append("productName",item.ProductName);
+                        }
+                    }
+                }
+                return View("Review");
+            }
+
+            else
+            {
+                ViewBag.Message = "Please log in to complete your order.";
+                return View("Login");
+            }
+        }
+
+
+        public IActionResult Review()
         {
             return View();
         }
 
+        public IActionResult Login(string username, string password)
+        {
+            ShopDBContext db = new ShopDBContext();
+
+            TempData.Peek("Login");
+
+            foreach (var user in db.User)
+            {
+                if (user.UserName == username)
+                {
+                    if (user.Password == password)
+                    {
+                        TempData["Login"] = true;
+                        TempData.Peek("Login");
+
+                        Response.Cookies.Append("user", user.UserName);
+                        Response.Cookies.Append("firstName", user.FirstName);
+                        Response.Cookies.Append("lastName", user.LastName);
+                        Response.Cookies.Append("email", user.Email);
+                        Response.Cookies.Append("phone", user.Phone);
+                        Response.Cookies.Append("account", user.Accounttype);
+
+                        return View();
+                    }
+                }
+            }
+
+            ViewBag.Message = "Incorrect Password";
+            return View();
+        }
+
+        public IActionResult Logout()
+        {
+            TempData["Login"] = false;
+            return View("Index");
+        }
+
         public IActionResult Index()
         {
+            // Use [Databasename]Context object to access the DB data
+            ShopDBContext db = new ShopDBContext();
+            var testObj = new User();
+
+            if (TempData.Peek("Login") == null)
+            {
+                TempData["Login"] = false;
+                TempData.Peek("Login");
+            }
+
+            //foreach loop to pull out individual rows of data
+            foreach (var user in db.User)
+            {
+                testObj = new User()
+                {
+                    UserName = user.UserName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Phone = user.Phone,
+                    Accounttype = user.Accounttype,
+                    Id = user.Id,
+                    Password = user.Password
+                };
+
+                List<User> userList = new List<User>();
+            }
+
             return View();
         }
 
@@ -45,54 +142,29 @@ namespace CoffeeShop.Controllers
             return View();
         }
 
-        public IActionResult createUser(string accountType, string userName, string firstName, string lastName, string email, string phone, string password)
+        public IActionResult createUser(User user)
         {
-            Person User = new Person();
-            User.accountType = accountType;
-            User.userName = userName;
-            User.firstName = firstName;
-            User.lastName = lastName;
-            User.email = email;
-            User.phone = phone;
-            User.password = password;
+            ShopDBContext db = new ShopDBContext();
 
-            return View(User);
+            // Use db object to access the table we want to write data to
+            db.User.Add(user);
+
+            db.SaveChanges();
+
+            return View(user);
         }
 
         public IActionResult Profile()
         {
+            TempData.Peek("User");
             return View();
         }
 
         public IActionResult Order()
-        {
-            return View();
-        }
-
-        public IActionResult Review(string light, string lightbig, string med, string medbig, string dark, string darkbig, string filter, string cream, string sugar)
-        {
-            Person newOrder = new Person();
-            newOrder.currentOrder.Add(light);
-            newOrder.currentOrder.Add(lightbig);
-            newOrder.currentOrder.Add(med);
-            newOrder.currentOrder.Add(medbig);
-            newOrder.currentOrder.Add(dark);
-            newOrder.currentOrder.Add(darkbig);
-            newOrder.currentOrder.Add(filter);
-            newOrder.currentOrder.Add(sugar);
-            newOrder.currentOrder.Add(cream);
-
-            List<string> reviewOrder = new List<string>();
-
-            foreach (string item in newOrder.currentOrder)
-            {
-                if (item != "")
-                {
-                    ViewBag.reviewOrder.Add(item);
-                }
-            }
-
-            return View();
+        { 
+            ShopDBContext db = new ShopDBContext();
+            TempData.Peek("User");
+            return View(db);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

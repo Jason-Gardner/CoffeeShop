@@ -15,55 +15,67 @@ namespace CoffeeShop.Models
         {
         }
 
-        public virtual DbSet<Users> Users { get; set; }
+        public virtual DbSet<Inventory> Inventory { get; set; }
+        public virtual DbSet<User> User { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Server=.\\sqlexpress;Database=ShopDB;Integrated Security=True");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Users>(entity =>
+            modelBuilder.Entity<Inventory>(entity =>
+            {
+                entity.HasKey(e => e.ProductId);
+
+                entity.Property(e => e.ProductId).HasColumnName("ProductID");
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Inventory1).HasColumnName("Inventory");
+
+                entity.Property(e => e.ProductName)
+                    .IsRequired()
+                    .HasMaxLength(30);
+
+                entity.Property(e => e.UnitPrice).HasColumnType("money");
+            });
+
+            modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.AccountType)
-                    .IsRequired()
-                    .HasColumnName("accountType")
+                entity.Property(e => e.Accounttype)
+                    .HasColumnName("accounttype")
                     .HasMaxLength(10);
 
-                entity.Property(e => e.Address)
-                    .IsRequired()
-                    .HasColumnName("address")
-                    .HasMaxLength(100);
-
                 entity.Property(e => e.Email)
-                    .IsRequired()
                     .HasColumnName("email")
                     .HasMaxLength(100);
 
                 entity.Property(e => e.FirstName)
-                    .IsRequired()
                     .HasColumnName("firstName")
                     .HasMaxLength(30);
 
                 entity.Property(e => e.LastName)
-                    .IsRequired()
                     .HasColumnName("lastName")
                     .HasMaxLength(30);
 
                 entity.Property(e => e.Password)
-                    .IsRequired()
                     .HasColumnName("password")
-                    .HasMaxLength(50);
+                    .HasMaxLength(30);
+
+                entity.Property(e => e.Phone)
+                    .HasColumnName("phone")
+                    .HasMaxLength(15);
 
                 entity.Property(e => e.UserName)
-                    .IsRequired()
                     .HasColumnName("userName")
                     .HasMaxLength(30);
             });

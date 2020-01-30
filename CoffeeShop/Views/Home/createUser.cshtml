@@ -1,34 +1,33 @@
-﻿
+﻿@model User
+
 @{
     ViewData["Title"] = "Login";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@model Person
-
 <div class="text-center">
-<h1>New Account Created!</h1>
+    <h1>New Account Created!</h1>
 
-<table style="padding-bottom: 10px;" align="center">
-    <tr>
-        <td>User Name: @Model.userName</td>
-    </tr>
-    <tr>
-        <td>First Name: @Model.firstName</td>
-    </tr>
-    <tr>
-        <td>Last Name: @Model.lastName</td>
-    </tr>
-    <tr>
-        <td>Account Type: @Model.accountType</td>
-    </tr>
-    <tr>
-        <td>Email: @Model.email</td>
-    </tr>
-    <tr>
-        <td>Phone: @Model.phone</td>
-    </tr>
-</table><br />
-<input type="button" value="View Profile" onclick="@("window.location.href='" + @Url.Action("Profile", "Home") + "'");" />
-<input type="button" value="Create Order" onclick="@("window.location.href='" + @Url.Action("Order", "Home") + "'");" />
+    <table style="padding-bottom: 10px;" align="center">
+        <tr>
+            <td>User Name: @Model.UserName</td>
+        </tr>
+        <tr>
+            <td>First Name: @Model.FirstName</td>
+        </tr>
+        <tr>
+            <td>Last Name: @Model.LastName</td>
+        </tr>
+        <tr>
+            <td>Account Type: @Model.Accounttype</td>
+        </tr>
+        <tr>
+            <td>Email: @Model.Email</td>
+        </tr>
+        <tr>
+            <td>Phone: @Model.Phone</td>
+        </tr>
+    </table><br />
+    <input type="button" value="View Profile" onclick="@("window.location.href='" + @Url.Action("Profile", "Home") + "'");" />
+    <input type="button" value="Create Order" onclick="@("window.location.href='" + @Url.Action("Order", "Home") + "'");" />
 </div>

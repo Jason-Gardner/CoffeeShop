@@ -4,18 +4,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@model List<string>
-
 <h1>Review Order</h1>
 
-@foreach (var item in Model)
-{
-    <div>
-        @item
-        <hr />
-    </div>
-}
+<p>You have purchased @Context.Request.Cookies["productName"]</p>
 
-
+<form>
+    <input type="button" name="order" value="Order More" onclick="location.href='@Url.Action("Order","Home")'" />
+    <input type="button" name="logout" value="Logout" onclick="location.href='@Url.Action("Logout","Home")'" />
+</form>
 
 

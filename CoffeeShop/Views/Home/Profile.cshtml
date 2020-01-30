@@ -1,34 +1,37 @@
-﻿
+﻿@model User
+@using Microsoft.AspNetCore.Http
+
 @{
     ViewData["Title"] = "Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    
 }
 
 <h1>Profile</h1>
 
-@model Person
 
 <div class="text-center">
     <h1>Profile Information</h1>
 
     <table style="padding-bottom: 10px;" align="center">
         <tr>
-            <td>User Name: @Model.userName</td>
+            <td>User Name: @Context.Request.Cookies["user"]</td>
         </tr>
         <tr>
-            <td>First Name: @Model.firstName</td>
+            <td>First Name: @Context.Request.Cookies["firstName"]</td>
         </tr>
         <tr>
-            <td>Last Name: @Model.lastName</td>
+            <td>Last Name: @Context.Request.Cookies["lastName"]</td>
         </tr>
         <tr>
-            <td>Account Type: @Model.accountType</td>
+            <td>Account Type: @Context.Request.Cookies["account"]</td>
         </tr>
         <tr>
-            <td>Email: @Model.email</td>
+            <td>Email: @Context.Request.Cookies["email"]</td>
         </tr>
         <tr>
-            <td>Phone: @Model.phone</td>
+            <td>Phone: @Context.Request.Cookies["phone"]</td>
         </tr>
-    </table><br /></div>
+    </table><br />
+</div>
 

@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Login";
+    if (TempData["Login"] == null)
+    {
+        TempData["Login"] = false;
+    }
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 style="padding-bottom: 5px; padding-top: 5px;">Login</h1>
+
+@if (ViewBag.Message != "")
+{
+    <h3>@ViewBag.Message</h3>
+}
+
+@if ((bool)TempData.Peek("Login") == false)
+{
+<form asp-controller="Home" asp-action="Login">
+    <input class="form-control" style="width:25%" type="text" name="username1" />
+    <input class="form-control" style="width:25%" type="password" name="password2" />
+    <input class="form-control badge-primary" style="width:25%" type="submit" value="Submit" />
+
+</form>
+}
+else
+{
+    <h3>You are already logged in!</h3>
+    <p>You can <a class="page-link" asp-action="Logout">click here</a> to log out.</p>
+}
+
+
