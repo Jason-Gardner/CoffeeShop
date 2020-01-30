@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Order";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -10,9 +9,9 @@
 
 <form>
     @{
-        foreach (var item in Model.Inventory)
+        foreach (var item in @Model.Inventory)
         {
-            <input type="button" id="@item.ProductId" name="@item.ProductName" value="Buy Now" onclick="location.href='@Url.Action("buyItem","Home", new { itemID = @item.ProductId })'" /> <label for="item.ProductName">@item.ProductName</label><br />
+            <input type="button" id="@item.ProductId" name="@item.ProductName" value="Buy Now" onclick="location.href='@Url.Action("buyItem","Home", new { itemID = @item.ProductId })'" /> <label for="button">@item.ProductName</label><br />
         }
     }
 </form>

@@ -23,23 +23,21 @@ namespace CoffeeShop.Controllers
             _logger = logger;
         }
 
-        // Need 1 Action to load registration
-        public IActionResult Register()
-        {
-            return View();
-        }
-
-        // Need 1 Action to take those user inputs and display the user name
-        public IActionResult NewUser(string userName, string email, string password)
-        {
-            return View();
-        }
-
         public IActionResult buyItem(int itemID)
         {
             if ((bool)TempData.Peek("Login"))
             {
                 ShopDBContext dbinv = new ShopDBContext();
+
+                User Person = new User();
+
+                foreach (User item in dbinv.User)
+                {
+                    if (Response.Cookies.Equals(item.UserName))
+                    {
+                        Person = item;
+                    }
+                }
 
                 foreach (Inventory item in dbinv.Inventory)
                 {
@@ -48,6 +46,9 @@ namespace CoffeeShop.Controllers
                         if (item.Inventory1 > 0 )
                         {
                             Response.Cookies.Append("productName",item.ProductName);
+                            //item.Inventory1 -= 1;
+                            //dbinv.SaveChanges();
+                            //Person.Funds -= item.unitprice;
                         }
                     }
                 }
@@ -67,7 +68,14 @@ namespace CoffeeShop.Controllers
             return View();
         }
 
+        
         public IActionResult Login(string username, string password)
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Check(string username, string password)
         {
             ShopDBContext db = new ShopDBContext();
 
@@ -89,7 +97,7 @@ namespace CoffeeShop.Controllers
                         Response.Cookies.Append("phone", user.Phone);
                         Response.Cookies.Append("account", user.Accounttype);
 
-                        return View();
+                        return View("Profile");
                     }
                 }
             }
@@ -161,10 +169,9 @@ namespace CoffeeShop.Controllers
         }
 
         public IActionResult Order()
-        { 
-            ShopDBContext db = new ShopDBContext();
-            TempData.Peek("User");
-            return View(db);
+        {
+            ShopDBContext InvList = new ShopDBContext();
+            return View(InvList);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

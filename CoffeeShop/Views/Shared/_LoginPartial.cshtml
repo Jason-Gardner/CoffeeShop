@@ -2,8 +2,6 @@
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
-@model User
-
     <ul class="navbar-nav">
         @if (SignInManager.IsSignedIn(User) | (bool)TempData.Peek("Login")) 
         {

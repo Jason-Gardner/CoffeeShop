@@ -1,14 +1,11 @@
-﻿@model User
-@using Microsoft.AspNetCore.Http
+﻿@using Microsoft.AspNetCore.Http
 
 @{
     ViewData["Title"] = "Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    
 }
 
 <h1>Profile</h1>
-
 
 <div class="text-center">
     <h1>Profile Information</h1>
@@ -34,4 +31,8 @@
         </tr>
     </table><br />
 </div>
+<form>
+    <input type="button" name="order" value="Order" onclick="location.href='@Url.Action("Order","Home")'" />
+    <input type="button" name="logout" value="Logout" onclick="location.href='@Url.Action("Logout","Home")'" />
+</form>
 
