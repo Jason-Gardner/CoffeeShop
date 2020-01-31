@@ -13,5 +13,6 @@ namespace CoffeeShop.Models
         public string Phone { get; set; }
         public string Accounttype { get; set; }
         public string Password { get; set; }
+        public decimal? Balance { get; set; }
     }
 }

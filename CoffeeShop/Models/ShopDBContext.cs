@@ -55,6 +55,10 @@ namespace CoffeeShop.Models
                     .HasColumnName("accounttype")
                     .HasMaxLength(10);
 
+                entity.Property(e => e.Balance)
+                    .HasColumnName("balance")
+                    .HasColumnType("money");
+
                 entity.Property(e => e.Email)
                     .HasColumnName("email")
                     .HasMaxLength(100);

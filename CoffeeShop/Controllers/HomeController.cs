@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Http;
 using System.Web;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System.Text.Json;
 
 namespace CoffeeShop.Controllers
 {
@@ -28,30 +30,40 @@ namespace CoffeeShop.Controllers
             if ((bool)TempData.Peek("Login"))
             {
                 ShopDBContext dbinv = new ShopDBContext();
+                ShopDBContext inv = new ShopDBContext();
+                User tempUser = JsonSerializer.Deserialize<User>(TempData.Peek("user").ToString());
 
-                User Person = new User();
-
-                foreach (User item in dbinv.User)
-                {
-                    if (Response.Cookies.Equals(item.UserName))
-                    {
-                        Person = item;
-                    }
-                }
-
-                foreach (Inventory item in dbinv.Inventory)
+                foreach (Inventory item in inv.Inventory)
                 {
                     if (itemID == item.ProductId)
                     {
-                        if (item.Inventory1 > 0 )
+                        if (item.Inventory1 > 0)
                         {
-                            Response.Cookies.Append("productName",item.ProductName);
-                            //item.Inventory1 -= 1;
-                            //dbinv.SaveChanges();
-                            //Person.Funds -= item.unitprice;
+                            TempData["item"] = item.ProductName;
+
+                            foreach (var user in dbinv.User)
+                            {
+                                if (tempUser.Id == user.Id)
+                                {
+                                    if (user.Balance > item.UnitPrice)
+                                    {
+                                        user.Balance -= item.UnitPrice;
+                                        item.Inventory1 -= 1;
+                                        TempData["bought"] = item.ProductName;
+                                        TempData["balance"] = user.Balance;
+                                    }
+                                    else
+                                    {
+                                        TempData["broke"] = "This item costs $" + String.Format("{0:0.00}", item.UnitPrice) + ", you have $" + String.Format("{0:0.00}", user.Balance) + " in your account.";
+                                    }
+                                }
+                            }
+                            dbinv.SaveChanges();
+                            
                         }
                     }
                 }
+                inv.SaveChanges();
                 return View("Review");
             }
 
@@ -68,37 +80,26 @@ namespace CoffeeShop.Controllers
             return View();
         }
 
-        
+
         public IActionResult Login(string username, string password)
         {
             return View();
         }
 
-        [HttpGet]
+        
         public IActionResult Check(string username, string password)
         {
             ShopDBContext db = new ShopDBContext();
 
-            TempData.Peek("Login");
-
             foreach (var user in db.User)
             {
-                if (user.UserName == username)
+                if (user.UserName == username && user.Password == password)
                 {
-                    if (user.Password == password)
-                    {
-                        TempData["Login"] = true;
-                        TempData.Peek("Login");
-
-                        Response.Cookies.Append("user", user.UserName);
-                        Response.Cookies.Append("firstName", user.FirstName);
-                        Response.Cookies.Append("lastName", user.LastName);
-                        Response.Cookies.Append("email", user.Email);
-                        Response.Cookies.Append("phone", user.Phone);
-                        Response.Cookies.Append("account", user.Accounttype);
-
-                        return View("Profile");
-                    }
+                    TempData["user"] = JsonSerializer.Serialize(user);
+                    TempData.Keep("user");
+                    TempData["Login"] = true;
+                    TempData.Keep("Login");
+                    return View("Profile");
                 }
             }
 
@@ -109,6 +110,8 @@ namespace CoffeeShop.Controllers
         public IActionResult Logout()
         {
             TempData["Login"] = false;
+            TempData["user"] = "";
+
             return View("Index");
         }
 
@@ -118,28 +121,13 @@ namespace CoffeeShop.Controllers
             ShopDBContext db = new ShopDBContext();
             var testObj = new User();
 
-            if (TempData.Peek("Login") == null)
+            if (TempData["Login"] == null)
             {
                 TempData["Login"] = false;
-                TempData.Peek("Login");
-            }
-
-            //foreach loop to pull out individual rows of data
-            foreach (var user in db.User)
-            {
-                testObj = new User()
+                foreach (var cookie in Request.Cookies.Keys)
                 {
-                    UserName = user.UserName,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email,
-                    Phone = user.Phone,
-                    Accounttype = user.Accounttype,
-                    Id = user.Id,
-                    Password = user.Password
-                };
-
-                List<User> userList = new List<User>();
+                    Response.Cookies.Delete(cookie);
+                }
             }
 
             return View();
@@ -162,9 +150,9 @@ namespace CoffeeShop.Controllers
             return View(user);
         }
 
+        [HttpPost]
         public IActionResult Profile()
         {
-            TempData.Peek("User");
             return View();
         }
 

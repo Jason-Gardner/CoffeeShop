@@ -6,7 +6,13 @@
 
 <h1>Review Order</h1>
 
-<p>You have purchased @Context.Request.Cookies["productName"]</p>
+@if (TempData["broke"] == null)
+{
+<p>You have purchased @TempData["bought"]</p><p>Your balance is @String.Format("{0:0.00}", @TempData["balance"])</p> }
+@if (TempData["bought"] == null)
+{
+<p>@TempData["broke"]</p>
+}
 
 <form>
     <input type="button" name="order" value="Order More" onclick="location.href='@Url.Action("Order","Home")'" />
