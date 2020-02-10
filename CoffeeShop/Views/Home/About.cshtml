@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewData["Title"] = "About";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model ShopDBContext
+
+<h1>About</h1>
+<p>Please enter the number of the item you would like to know more about:</p>
+<input type ="number" pattern="[0-9]{1}" />
+<button type="submit" onclick="Search">Search</button>
+

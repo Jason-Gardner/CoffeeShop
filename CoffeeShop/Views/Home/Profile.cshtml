@@ -1,11 +1,12 @@
 ﻿@using Microsoft.AspNetCore.Http
 @using System.Text.Json
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 
 @{
     ViewData["Title"] = "Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    User tempUser = JsonSerializer.Deserialize<User>(TempData.Peek("user").ToString());
+    Client tempUser = JsonSerializer.Deserialize<Client>(HttpContextAccessor.HttpContext.Session.GetString("user"));
 }
 
 <h1>Profile</h1>
@@ -34,8 +35,10 @@
         </tr>
     </table><br />
 </div>
-<form>
+<form style="align-content: center">
     <input type="button" name="order" value="Order" onclick="location.href='@Url.Action("Order","Home")'" />
     <input type="button" name="logout" value="Logout" onclick="location.href='@Url.Action("Logout","Home")'" />
+    <input type="button" name="history" value="History" onclick="location.href='@Url.Action("History","Home")'" />
+    <input type="button" name="about" value="Item Lookup" onclick="location.href='@Url.Action("About","Home")'" />
 </form>
 

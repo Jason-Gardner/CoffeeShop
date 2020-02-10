@@ -20,51 +20,93 @@ namespace CoffeeShop.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
+        private List<Inventory> itemList;
+        private List<Client> clientList;
+
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
+        }
+
+        public IActionResult History()
+        {
+            ShopDBContext db = new ShopDBContext();
+            List<Orders> userHistory = new List<Orders>();
+
+            Client tempUser = JsonSerializer.Deserialize<Client>(HttpContext.Session.Get("user"));
+            Inventory tempItem = new Inventory();
+
+            foreach (var item in db.Orders)
+            {
+                if (item.UserId == tempUser.Id)
+                {
+                    userHistory.Add(item);
+                }
+            }
+
+            HttpContext.Session.SetString("orders", JsonSerializer.Serialize(userHistory));
+
+            return View(db);
+        }
+
+        public IActionResult About()
+        {
+            ShopDBContext db = new ShopDBContext();
+            return View("About", db);
+        }
+
+        private void GetData()
+        {
+            ShopDBContext db = new ShopDBContext();
+            itemList = db.Inventory.ToList();
+            clientList = db.Client.ToList();
+
         }
 
         public IActionResult buyItem(int itemID)
         {
             if ((bool)TempData.Peek("Login"))
             {
-                ShopDBContext dbinv = new ShopDBContext();
-                ShopDBContext inv = new ShopDBContext();
-                User tempUser = JsonSerializer.Deserialize<User>(TempData.Peek("user").ToString());
+                GetData();
 
-                foreach (Inventory item in inv.Inventory)
+                Client tempUser = JsonSerializer.Deserialize<Client>(HttpContext.Session.Get("user"));
+                Inventory tempItem = new Inventory();
+
+                foreach (var item in itemList)
                 {
-                    if (itemID == item.ProductId)
+                    if (item.ProductId == itemID)
                     {
-                        if (item.Inventory1 > 0)
-                        {
-                            TempData["item"] = item.ProductName;
-
-                            foreach (var user in dbinv.User)
-                            {
-                                if (tempUser.Id == user.Id)
-                                {
-                                    if (user.Balance > item.UnitPrice)
-                                    {
-                                        user.Balance -= item.UnitPrice;
-                                        item.Inventory1 -= 1;
-                                        TempData["bought"] = item.ProductName;
-                                        TempData["balance"] = user.Balance;
-                                    }
-                                    else
-                                    {
-                                        TempData["broke"] = "This item costs $" + String.Format("{0:0.00}", item.UnitPrice) + ", you have $" + String.Format("{0:0.00}", user.Balance) + " in your account.";
-                                    }
-                                }
-                            }
-                            dbinv.SaveChanges();
-                            
-                        }
+                        tempItem = item;
                     }
                 }
-                inv.SaveChanges();
-                return View("Review");
+
+                if (tempItem.Quantity > 0)
+                {
+                    tempItem.Quantity -= 1;
+                    tempUser.Balance -= tempItem.UnitPrice;
+                }
+
+                foreach (var item in itemList)
+                {
+                    if (item.ProductId == tempItem.ProductId)
+                    {
+                        item.Quantity = tempItem.Quantity;
+                    }
+                }
+
+                foreach(var user in clientList)
+                {
+                    if (user.Id == tempUser.Id)
+                    {
+                        user.Balance = tempUser.Balance;
+                    }
+                }
+                
+
+                SaveItem(itemList);
+                SaveUsers(clientList);
+
+                return View("Review", tempItem);
             }
 
             else
@@ -80,6 +122,11 @@ namespace CoffeeShop.Controllers
             return View();
         }
 
+        public IActionResult Register()
+        {
+            return View();
+        }
+
 
         public IActionResult Login(string username, string password)
         {
@@ -89,14 +136,13 @@ namespace CoffeeShop.Controllers
         
         public IActionResult Check(string username, string password)
         {
-            ShopDBContext db = new ShopDBContext();
+            GetData();
 
-            foreach (var user in db.User)
+            foreach (var user in clientList)
             {
                 if (user.UserName == username && user.Password == password)
                 {
-                    TempData["user"] = JsonSerializer.Serialize(user);
-                    TempData.Keep("user");
+                    HttpContext.Session.SetString("user", JsonSerializer.Serialize(user));
                     TempData["Login"] = true;
                     TempData.Keep("Login");
                     return View("Profile");
@@ -104,13 +150,13 @@ namespace CoffeeShop.Controllers
             }
 
             ViewBag.Message = "Incorrect Password";
-            return View();
+            return View("Login");
         }
 
         public IActionResult Logout()
         {
             TempData["Login"] = false;
-            TempData["user"] = "";
+            HttpContext.Session.Clear();
 
             return View("Index");
         }
@@ -119,15 +165,12 @@ namespace CoffeeShop.Controllers
         {
             // Use [Databasename]Context object to access the DB data
             ShopDBContext db = new ShopDBContext();
-            var testObj = new User();
+            var testObj = new Client();
 
-            if (TempData["Login"] == null)
+            if (TempData.Peek("Login") == null)
             {
                 TempData["Login"] = false;
-                foreach (var cookie in Request.Cookies.Keys)
-                {
-                    Response.Cookies.Delete(cookie);
-                }
+                TempData.Keep("Login");
             }
 
             return View();
@@ -138,12 +181,15 @@ namespace CoffeeShop.Controllers
             return View();
         }
 
-        public IActionResult createUser(User user)
+        public IActionResult createUser(Client user)
         {
             ShopDBContext db = new ShopDBContext();
 
             // Use db object to access the table we want to write data to
-            db.User.Add(user);
+            db.Client.Add(user);
+
+            //we can build it as we add it
+            // db.User.Add(new User() { Name = "Something....", Email = ... etc.}
 
             db.SaveChanges();
 
@@ -166,6 +212,28 @@ namespace CoffeeShop.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public static void SaveItem(List<Inventory> list)
+        {
+            ShopDBContext db = new ShopDBContext();
+
+            foreach (var item in list)
+            {
+                db.Inventory.Update(item);
+                db.SaveChanges();
+            }
+        }
+
+        public static void SaveUsers(List<Client> list)
+        {
+            ShopDBContext db = new ShopDBContext();
+
+            foreach (var item in list)
+            {
+                db.Client.Update(item);
+                db.SaveChanges();
+            }
         }
     }
 }
