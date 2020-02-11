@@ -1,4 +1,8 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Http
+@using System.Text.Json
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -7,8 +11,14 @@
             Welcome to the<br />
             Grand Circus<br />
             Coffee Shop!
-        </h1><br /><br />
-        <p>You can <a asp-action="Register">register here</a> to purchase products.</p>
-        <p>You can <a asp-action="Login">click here</a> to log in.</p>
+        </h1><br />
+        @if (HttpContextAccessor.HttpContext.Session.Get("user") == null)
+        {
+            <p>You can <a asp-action="Register">register here</a> to purchase products.</p>
+            <p>You can <a asp-action="Login">click here</a> to log in.</p>
+        }
+        else {<p>You can <a asp-action="Order">click here</a> to buy products.</p>
+              <p>You can <a asp-action="Profile">click here</a> to view your profile.</p>}
+        
         <img src="https://i.pinimg.com/originals/2a/84/90/2a849069c7f487f71bb6594dffb84e5e.png" alt="Alternate Text" width="50" height="50" />
     </div>

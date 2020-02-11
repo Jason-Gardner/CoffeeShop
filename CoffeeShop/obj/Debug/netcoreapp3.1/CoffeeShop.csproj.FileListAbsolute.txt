@@ -188,3 +188,4 @@ C:\Users\Jason Gardner\source\repos\CoffeeShop\CoffeeShop\bin\Debug\netcoreapp3.
 C:\Users\Jason Gardner\source\repos\CoffeeShop\CoffeeShop\obj\Debug\netcoreapp3.1\CoffeeShop.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\Jason Gardner\source\repos\CoffeeShop\CoffeeShop\obj\Debug\netcoreapp3.1\CoffeeShop.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\Jason Gardner\source\repos\CoffeeShop\CoffeeShop\obj\Debug\netcoreapp3.1\Razor\Views\Home\History.cshtml.g.cs
+C:\Users\Jason Gardner\source\repos\CoffeeShop\CoffeeShop\obj\Debug\netcoreapp3.1\Razor\Views\Home\About.cshtml.g.cs

@@ -19,17 +19,17 @@
         {
             if (item.ProductId == order.ItemId)
             {
-    <tr>
-        <td>
-            @order.OrderId
-        </td>
-        <td>
-            @item.ProductName
-        </td>
-        <td>
-            <b>Order Total: $@String.Format("{0:0.00}", item.UnitPrice)</b>
-        </td>
-    </tr>
+                <tr>
+                    <td>
+                        @order.OrderId
+                    </td>
+                    <td>
+                        @item.ProductName
+                    </td>
+                    <td>
+                        <b>Order Total: $@String.Format("{0:0.00}", item.UnitPrice)</b>
+                    </td>
+                </tr>
             }
         }
     }

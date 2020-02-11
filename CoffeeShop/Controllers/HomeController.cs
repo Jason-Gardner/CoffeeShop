@@ -60,7 +60,6 @@ namespace CoffeeShop.Controllers
             ShopDBContext db = new ShopDBContext();
             itemList = db.Inventory.ToList();
             clientList = db.Client.ToList();
-
         }
 
         public IActionResult buyItem(int itemID)
@@ -80,33 +79,42 @@ namespace CoffeeShop.Controllers
                     }
                 }
 
-                if (tempItem.Quantity > 0)
+                if (tempItem.Quantity > 0 && tempUser.Balance >= tempItem.UnitPrice)
                 {
                     tempItem.Quantity -= 1;
                     tempUser.Balance -= tempItem.UnitPrice;
-                }
 
-                foreach (var item in itemList)
-                {
-                    if (item.ProductId == tempItem.ProductId)
+
+                    foreach (var item in itemList)
                     {
-                        item.Quantity = tempItem.Quantity;
+                        if (item.ProductId == tempItem.ProductId)
+                        {
+                            item.Quantity = tempItem.Quantity;
+                        }
                     }
-                }
 
-                foreach(var user in clientList)
-                {
-                    if (user.Id == tempUser.Id)
+                    foreach (var user in clientList)
                     {
-                        user.Balance = tempUser.Balance;
+                        if (user.Id == tempUser.Id)
+                        {
+                            user.Balance = tempUser.Balance;
+                        }
                     }
+                    SaveItem(itemList);
+                    SaveUsers(clientList);
+
+                    return View("Review", tempItem);
                 }
-                
-
-                SaveItem(itemList);
-                SaveUsers(clientList);
-
-                return View("Review", tempItem);
+                else if (tempItem.Quantity <= 0)
+                {
+                    ViewBag.Message = "Not enough in stock to purchase.";
+                    return View("Review");
+                }
+                else
+                {
+                    ViewBag.Message = "Not enough funds in your account.";
+                    return View("Review");
+                }
             }
 
             else

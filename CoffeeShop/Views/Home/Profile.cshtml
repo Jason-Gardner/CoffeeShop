@@ -11,8 +11,8 @@
 
 <h1>Profile</h1>
 
-<div class="text-center">
-    <h1>Profile Information</h1>
+
+    <h1 style="text-align: center">Profile Information</h1>
 
     <table style="padding-bottom: 10px;" align="center">
         <tr>
@@ -33,12 +33,12 @@
         <tr>
             <td>Phone: @tempUser.Phone</td>
         </tr>
-    </table><br />
-</div>
-<form style="align-content: center">
+    <tr>
+<td>
     <input type="button" name="order" value="Order" onclick="location.href='@Url.Action("Order","Home")'" />
     <input type="button" name="logout" value="Logout" onclick="location.href='@Url.Action("Logout","Home")'" />
     <input type="button" name="history" value="History" onclick="location.href='@Url.Action("History","Home")'" />
     <input type="button" name="about" value="Item Lookup" onclick="location.href='@Url.Action("About","Home")'" />
-</form>
+</td>
+    </tr></table>
 
