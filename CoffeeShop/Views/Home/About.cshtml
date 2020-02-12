@@ -4,10 +4,24 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@model ShopDBContext
+@model Inventory
 
 <h1>About</h1>
 <p>Please enter the number of the item you would like to know more about:</p>
-<input type ="number" pattern="[0-9]{1}" />
-<button type="submit" onclick="Search">Search</button>
+<form asp-action="Search">
+    <input type="number" pattern="[0-9]{1}"/>
+    <button type="submit" name="itemNum">Search</button>
+</form>
 
+<table>
+    @if (Model != null)
+    {
+        <tr>
+            <td><i>Product Name</i></td><td><i>Price</i></td><td><i>Quantity Available</i></td>
+        </tr>
+        <tr>
+            <td>@Model.ProductName</td><td>@Model.UnitPrice</td><td>@Model.Quantity</td>
+        </tr>
+        
+    }
+</table>

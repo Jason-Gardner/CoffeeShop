@@ -49,10 +49,26 @@ namespace CoffeeShop.Controllers
             return View(db);
         }
 
+        public IActionResult Search(int itemNum)
+        {
+            GetData();
+
+            Inventory tempItem = new Inventory();
+
+            foreach (var item in itemList)
+            {   
+                if (item.ProductId == itemNum)
+                {
+                    tempItem = item;
+                }
+            }
+
+            return View("About", tempItem);
+        }
+
         public IActionResult About()
         {
-            ShopDBContext db = new ShopDBContext();
-            return View("About", db);
+            return View();
         }
 
         private void GetData()
@@ -103,6 +119,9 @@ namespace CoffeeShop.Controllers
                     SaveItem(itemList);
                     SaveUsers(clientList);
 
+                    ShopDBContext db = new ShopDBContext();
+                    db.Orders.Add(new Orders { UserId = tempUser.Id, ItemId = tempItem.ProductId });
+                    db.SaveChanges();
                     return View("Review", tempItem);
                 }
                 else if (tempItem.Quantity <= 0)
@@ -141,7 +160,7 @@ namespace CoffeeShop.Controllers
             return View();
         }
 
-        
+
         public IActionResult Check(string username, string password)
         {
             GetData();
@@ -204,7 +223,6 @@ namespace CoffeeShop.Controllers
             return View(user);
         }
 
-        [HttpPost]
         public IActionResult Profile()
         {
             return View();

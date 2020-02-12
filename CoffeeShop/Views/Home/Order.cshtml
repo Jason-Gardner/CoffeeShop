@@ -1,4 +1,8 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Http
+@using System.Text.Json
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
     ViewData["Title"] = "Order";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -16,10 +20,14 @@
                 <tr>
                     <td><label for="button"> @item.ProductName </label></td>
                     <td><i> @item.Description </i></td>
-                    <td><b> $@String.Format("{0:0.00}", item.UnitPrice) </b>
-                    <td><input type="button" id="@item.ProductId" name="@item.ProductName" value="Buy Now" onclick="location.href='@Url.Action("buyItem", "Home", new { itemID = @item.ProductId })'" /></td>
-                </tr>
-            }
+                    <td>
+                        <b> $@String.Format("{0:0.00}", item.UnitPrice) </b>
+                        @if (HttpContextAccessor.HttpContext.Session.Get("user") != null)
+                        {
+                        <td><input type="button" id="@item.ProductId" name="@item.ProductName" value="Buy Now" onclick="location.href='@Url.Action("buyItem", "Home", new { itemID = @item.ProductId })'" /></td>
+                        }
+                    </tr>
+                }
         }
     </table>
 
