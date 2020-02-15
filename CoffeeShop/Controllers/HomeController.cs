@@ -13,6 +13,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Text.Json;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CoffeeShop.Controllers
 {
@@ -21,7 +23,7 @@ namespace CoffeeShop.Controllers
         private readonly ILogger<HomeController> _logger;
 
         private List<Inventory> itemList;
-        private List<Client> clientList;
+        private List<AspNetUsers> clientList;
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -56,7 +58,7 @@ namespace CoffeeShop.Controllers
             Inventory tempItem = new Inventory();
 
             foreach (var item in itemList)
-            {   
+            {
                 if (item.ProductId == itemNum)
                 {
                     tempItem = item;
@@ -75,74 +77,75 @@ namespace CoffeeShop.Controllers
         {
             ShopDBContext db = new ShopDBContext();
             itemList = db.Inventory.ToList();
-            clientList = db.Client.ToList();
+            clientList = db.AspNetUsers.ToList();
         }
 
+        [Authorize]
         public IActionResult buyItem(int itemID)
         {
-            if ((bool)TempData.Peek("Login"))
-            {
-                GetData();
+            GetData();
 
-                Client tempUser = JsonSerializer.Deserialize<Client>(HttpContext.Session.Get("user"));
-                Inventory tempItem = new Inventory();
+            AspNetUsers user = new AspNetUsers();
+            Inventory tempItem = new Inventory();
+
+            foreach (var item in itemList)
+            {
+                if (item.ProductId == itemID)
+                {
+                    tempItem = item;
+                }
+            }
+
+            foreach (var client in clientList)
+            {
+                if (client.Email == User.Identity.Name)
+                {
+                    user = client;
+                }
+            }
+
+            if (tempItem.Quantity > 0 && user.Balance >= tempItem.UnitPrice)
+            {
+                tempItem.Quantity -= 1;
+                user.Balance -= tempItem.UnitPrice;
+
 
                 foreach (var item in itemList)
                 {
-                    if (item.ProductId == itemID)
+                    if (item.ProductId == tempItem.ProductId)
                     {
-                        tempItem = item;
+                        item.Quantity = tempItem.Quantity;
                     }
                 }
 
-                if (tempItem.Quantity > 0 && tempUser.Balance >= tempItem.UnitPrice)
+                foreach (var client in clientList)
                 {
-                    tempItem.Quantity -= 1;
-                    tempUser.Balance -= tempItem.UnitPrice;
-
-
-                    foreach (var item in itemList)
+                    if (user.Email == User.Identity.Name)
                     {
-                        if (item.ProductId == tempItem.ProductId)
-                        {
-                            item.Quantity = tempItem.Quantity;
-                        }
+                        client.Balance = user.Balance;
                     }
+                }
 
-                    foreach (var user in clientList)
-                    {
-                        if (user.Id == tempUser.Id)
-                        {
-                            user.Balance = tempUser.Balance;
-                        }
-                    }
-                    SaveItem(itemList);
-                    SaveUsers(clientList);
+                SaveItem(itemList);
+                SaveUsers(clientList);
 
-                    ShopDBContext db = new ShopDBContext();
-                    db.Orders.Add(new Orders { UserId = tempUser.Id, ItemId = tempItem.ProductId });
-                    db.SaveChanges();
-                    return View("Review", tempItem);
-                }
-                else if (tempItem.Quantity <= 0)
-                {
-                    ViewBag.Message = "Not enough in stock to purchase.";
-                    return View("Review");
-                }
-                else
-                {
-                    ViewBag.Message = "Not enough funds in your account.";
-                    return View("Review");
-                }
+                ShopDBContext db = new ShopDBContext();
+                db.Orders.Add(new Orders { UserId = User.Identity.GetHashCode(), ItemId = tempItem.ProductId });
+                db.SaveChanges();
+                return View("Review", tempItem);
+
             }
-
+            else if (tempItem.Quantity <= 0)
+            {
+                ViewBag.Message = "Not enough in stock to purchase.";
+                return View("Review");
+            }
             else
             {
-                ViewBag.Message = "Please log in to complete your order.";
-                return View("Login");
+                ViewBag.Message = "Not enough funds in your account.";
+                return View("Review");
             }
         }
-
 
         public IActionResult Review()
         {
@@ -155,30 +158,30 @@ namespace CoffeeShop.Controllers
         }
 
 
-        public IActionResult Login(string username, string password)
+        public IActionResult Login()
         {
             return View();
         }
 
 
-        public IActionResult Check(string username, string password)
-        {
-            GetData();
+        //public IActionResult Check(string username, string password)
+        //{
+        //    GetData();
 
-            foreach (var user in clientList)
-            {
-                if (user.UserName == username && user.Password == password)
-                {
-                    HttpContext.Session.SetString("user", JsonSerializer.Serialize(user));
-                    TempData["Login"] = true;
-                    TempData.Keep("Login");
-                    return View("Profile");
-                }
-            }
+        //    foreach (var user in clientList)
+        //    {
+        //        if ()
+        //        {
+        //            HttpContext.Session.SetString("user", JsonSerializer.Serialize(user));
+        //            TempData["Login"] = true;
+        //            TempData.Keep("Login");
+        //            return View("Profile");
+        //        }
+        //    }
 
-            ViewBag.Message = "Incorrect Password";
-            return View("Login");
-        }
+        //    ViewBag.Message = "Incorrect Password";
+        //    return View("Login");
+        //}
 
         public IActionResult Logout()
         {
@@ -190,14 +193,18 @@ namespace CoffeeShop.Controllers
 
         public IActionResult Index()
         {
-            // Use [Databasename]Context object to access the DB data
-            ShopDBContext db = new ShopDBContext();
-            var testObj = new Client();
 
-            if (TempData.Peek("Login") == null)
+            if (User != null && HttpContext.Session.Get("user") == null)
             {
-                TempData["Login"] = false;
-                TempData.Keep("Login");
+                GetData();
+
+                foreach (var client in clientList)
+                {
+                    if (client.Email == User.Identity.Name)
+                    {
+                        HttpContext.Session.SetString("user", JsonSerializer.Serialize(client));
+                    }
+                }
             }
 
             return View();
@@ -251,13 +258,13 @@ namespace CoffeeShop.Controllers
             }
         }
 
-        public static void SaveUsers(List<Client> list)
+        public static void SaveUsers(List<AspNetUsers> list)
         {
             ShopDBContext db = new ShopDBContext();
 
             foreach (var item in list)
             {
-                db.Client.Update(item);
+                db.AspNetUsers.Update(item);
                 db.SaveChanges();
             }
         }

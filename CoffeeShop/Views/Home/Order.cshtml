@@ -1,6 +1,6 @@
-﻿@using Microsoft.AspNetCore.Http
-@using System.Text.Json
-@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Order";
@@ -22,10 +22,10 @@
                     <td><i> @item.Description </i></td>
                     <td>
                         <b> $@String.Format("{0:0.00}", item.UnitPrice) </b>
-                        @if (HttpContextAccessor.HttpContext.Session.Get("user") != null)
+                        @if (SignInManager.IsSignedIn(User))
                         {
                         <td><input type="button" id="@item.ProductId" name="@item.ProductName" value="Buy Now" onclick="location.href='@Url.Action("buyItem", "Home", new { itemID = @item.ProductId })'" /></td>
-                        }
+                    }
                     </tr>
                 }
         }

@@ -7,7 +7,7 @@
 @{
     ViewData["Title"] = "Order History";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    Client tempUser = JsonSerializer.Deserialize<Client>(HttpContextAccessor.HttpContext.Session.GetString("user"));
+    AspNetUsers tempUser = JsonSerializer.Deserialize<AspNetUsers>(HttpContextAccessor.HttpContext.Session.GetString("user"));
     List<Orders> orderHistory = JsonSerializer.Deserialize<List<Orders>>(HttpContextAccessor.HttpContext.Session.GetString("orders"));
 }
 

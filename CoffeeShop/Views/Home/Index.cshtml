@@ -1,24 +1,27 @@
-﻿@using Microsoft.AspNetCore.Http
-@using System.Text.Json
-@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
-    <div class="text-center">
-        <h1 class="display-4">
-            Welcome to the<br />
-            Grand Circus<br />
-            Coffee Shop!
-        </h1><br />
-        @if (HttpContextAccessor.HttpContext.Session.Get("user") == null)
-        {
-            <p>You can <a asp-action="Register">register here</a> to purchase products.</p>
-            <p>You can <a asp-action="Login">click here</a> to log in.</p>
-        }
-        else {<p>You can <a asp-action="Order">click here</a> to buy products.</p>
-              <p>You can <a asp-action="Profile">click here</a> to view your profile.</p>}
-        
-        <img src="https://i.pinimg.com/originals/2a/84/90/2a849069c7f487f71bb6594dffb84e5e.png" alt="Alternate Text" width="50" height="50" />
-    </div>
+<div class="text-center">
+    <h1 class="display-4">
+        Welcome to the<br />
+        Grand Circus<br />
+        Coffee Shop!
+    </h1><br />
+
+    @if (!SignInManager.IsSignedIn(User))
+    {
+        <p>You can <a asp-area="Identity" asp-page="/Account/Register">register here</a> to purchase products.</p>
+        <p>You can <a asp-area="Identity" asp-page="/Account/Login">click here</a> to log in.</p>
+    }
+    else
+    {
+        <p>You can <a asp-action="Order">click here</a> to buy products.</p>
+        <p>You can <a asp-action="Profile">click here</a> to view your profile.</p>}
+
+    <img src="https://i.pinimg.com/originals/2a/84/90/2a849069c7f487f71bb6594dffb84e5e.png" alt="Alternate Text" width="50" height="50" />
+</div>

@@ -1,41 +1,38 @@
-﻿@using Microsoft.AspNetCore.Http
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@using Microsoft.AspNetCore.Http
 @using System.Text.Json
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 
 @{
     ViewData["Title"] = "Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
-
-    Client tempUser = JsonSerializer.Deserialize<Client>(HttpContextAccessor.HttpContext.Session.GetString("user"));
 }
 
+@if (SignInManager.IsSignedIn(User))
+{
+    AspNetUsers tempUser = JsonSerializer.Deserialize<AspNetUsers>(HttpContextAccessor.HttpContext.Session.GetString("user"));
     <h1 style="text-align: center">Profile Information</h1>
 
     <table style="padding-bottom: 10px;" align="center">
         <tr>
-            <td>User Name: @tempUser.UserName</td>
-        </tr>
-        <tr>
-            <td>First Name: @tempUser.FirstName</td>
-        </tr>
-        <tr>
-            <td>Last Name: @tempUser.LastName</td>
-        </tr>
-        <tr>
-            <td>Account Type: @tempUser.Accounttype</td>
-        </tr>
-        <tr>
             <td>Email: @tempUser.Email</td>
         </tr>
         <tr>
-            <td>Phone: @tempUser.Phone</td>
+            <td>Phone: @tempUser.PhoneNumber</td>
         </tr>
-    <tr>
-<td>
-    <input type="button" name="order" value="Order" onclick="location.href='@Url.Action("Order","Home")'" />
-    <input type="button" name="logout" value="Logout" onclick="location.href='@Url.Action("Logout","Home")'" />
-    <input type="button" name="history" value="History" onclick="location.href='@Url.Action("History","Home")'" />
-    <input type="button" name="about" value="Item Lookup" onclick="location.href='@Url.Action("About","Home")'" />
-</td>
-    </tr></table>
-
+        <tr>
+            <td>Balance: $@String.Format("{0:0.00}", tempUser.Balance)</td>
+        </tr>
+        <tr>
+            <td>
+                <input type="button" name="order" value="Order" onclick="location.href='@Url.Action("Order","Home")'" />
+                <input type="button" name="logout" value="Logout" onclick="location.href='@Url.Action("Logout","Home")'" />
+                <input type="button" name="history" value="History" onclick="location.href='@Url.Action("History","Home")'" />
+                <input type="button" name="about" value="Item Lookup" onclick="location.href='@Url.Action("About","Home")'" />
+            </td>
+        </tr>
+    </table>
+}
